@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block title %}Programs — {{ site.get('academy_name', '') }}{% endblock %}
+{% block content %}
+<h1>Programs</h1>
+<p class="muted">Member pricing applies to academy members. Weekly options bill per week; session options cover the full session.</p>
+
+{% for program in programs %}
+<article class="card">
+  <h2>{{ program['name'] }}</h2>
+  <p>{{ program['description'] }}</p>
+  <p class="muted">
+    {% if program['min_age'] %}Ages {{ program['min_age'] }}–{{ program['max_age'] }}.{% endif %}
+    {% if program['utr_min'] %}UTR {{ program['utr_min'] }}+.{% endif %}
+    {% if program['utr_max'] %}UTR below {{ program['utr_max'] }}.{% endif %}
+  </p>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr><th>Option</th><th>Member</th><th>Non-member</th><th></th></tr>
+      </thead>
+      <tbody>
+        {% for opt in options.get(program['id'], []) %}
+        <tr>
+          <td>{{ opt['label'] }}{% if opt['billing_period'] == 'week' %} <span class="badge">weekly</span>{% endif %}</td>
+          <td>{{ opt['price_member_cents'] | usd }}</td>
+          <td>{{ opt['price_nonmember_cents'] | usd }}</td>
+          <td>{# Phase 3: Enroll button #}<span class="muted">Enroll — coming soon</span></td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</article>
+{% endfor %}
+{% endblock %}

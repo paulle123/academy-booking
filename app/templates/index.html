@@ -1,0 +1,8 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="hero">
+  <h1>{{ site.get('academy_name', 'Our Academy') }}</h1>
+  <p class="tagline">{{ site.get('tagline', '') }}</p>
+  <a class="btn btn-primary" href="{{ url_for('public.programs') }}">Browse programs</a>
+</section>
+{% endblock %}

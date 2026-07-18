@@ -6,8 +6,9 @@ the academy owner manages everything from an admin panel.
 
 **Stack:** Flask · raw SQLite (parameterized SQL) · Jinja2 · Docker · Stripe hosted Checkout
 
-> Project status: **Phase 1 of 7 complete** — runnable skeleton with full schema,
-> seeded demo data and a public programs page. See `ROADMAP.md`.
+> **Live:** https://academy-booking.fly.dev — deployed on Fly.io.
+> Status: Phases 1–3 (skeleton, accounts, enrollment) are the current MVP.
+> Payments (Stripe) and full admin are in progress — see `ROADMAP.md`.
 
 ## Run locally
 
@@ -29,6 +30,16 @@ docker run -p 8000:8000 -e SECRET_KEY=change-me academy-booking
 # http://localhost:8000  (DB inits and seeds itself on boot)
 ```
 
+## Deploy (Fly.io)
+
+Deployed on Fly.io with the SQLite database on a persistent volume
+(survives redeploys) and `SECRET_KEY` stored as a Fly secret.
+
+    fly deploy
+
+Health check at `/healthz`. The machine sleeps when idle and wakes on
+the next request.
+
 ## Demo accounts (seeded)
 
 | Role   | Email             | Password   |
@@ -42,6 +53,3 @@ Stripe test card (once Phase 5 lands): `4242 4242 4242 4242`, any future expiry,
 
 - `PROJECT.md` — full context brief (architecture, decisions, handoff for AI assistants)
 - `ROADMAP.md` — Phases 2–7 specs with definitions of done
-- `MENTOR_NOTES.md` — core concepts explained for interview defense
-- `INTERVIEW_PREP.md` — likely interview questions + strong answers
-- `CONTINUE_WITH_AI.md` — compressed primer + daily AI-mentor workflow

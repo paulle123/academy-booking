@@ -18,7 +18,6 @@ from .config import Config
 # automatically). Any POST without a valid token is rejected with 400.
 csrf = CSRFProtect()
 
-
 def create_app(config_class=Config):
     app = Flask(__name__)
     app.config.from_object(config_class)
@@ -34,6 +33,9 @@ def create_app(config_class=Config):
 
     from .routes.public import bp as public_bp
     app.register_blueprint(public_bp)
+
+    from .routes.auth import bp as auth_bp
+    app.register_blueprint(auth_bp)
 
     # ---- template helpers -------------------------------------------------
     @app.template_filter("usd")

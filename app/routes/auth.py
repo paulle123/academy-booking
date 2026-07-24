@@ -82,3 +82,47 @@ def dashboard():
 def logout():
     session.clear()
     return redirect(url_for("public.index"))
+
+@bp.route("/children", methods=["GET"])
+@login_required
+def children():
+    parent_id = session.get("user_id")
+
+    db = get_db()
+
+    children = db.execute(
+        "SELECT id, name, birth_year, utr  FROM children WHERE parent_id = ?", (parent_id,)
+    ).fetchall()
+    return render_template("children.html", children=children)
+
+@bp.route("/add_child", methods=["POST", "GET"])
+@login_required
+def children_add():
+    if request.method == "POST":
+        name = request.form['name']
+        birth_year = request.form['birth_year']
+        utr_raw = request.form.get("utr", "").strip()
+        utr = None
+
+        if not name:
+            return "Invalid name."
+        try:
+            birth_year = int(request.form["birth_year"])
+        except ValueError:
+            return "Birth year must be a number."
+        if birth_year < 2007 or birth_year > 2023:
+            return "Invalid birth year."
+        if utr_raw:
+            try:
+                utr = float(utr_raw)
+            except ValueError:
+                return "UTR must be a number."
+
+        db = get_db()
+        db.execute(
+            "INSERT INTO children (parent_id, name, birth_year, utr) VALUES (?, ?, ?, ?)",
+            (session["user_id"], name, birth_year, utr)
+        )
+        db.commit()
+        return redirect(url_for("auth.children"))
+    return render_template("add_child.html")

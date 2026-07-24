@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block title %}Children — {{ site.get('academy_name', '') }}{% endblock %}
+{% block content %}
+<h1>Children</h1>
+
+{% for child in children %}
+<article class="card">
+  <h2>{{ child['name'] }}</h2>
+  <p>{{ child['birth_year'] }}</p>
+  <p>{{ child['utr'] }}</p>
+</article>
+{% endfor %}
+{% endblock %}

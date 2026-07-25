@@ -126,3 +126,15 @@ def children_add():
         db.commit()
         return redirect(url_for("auth.children"))
     return render_template("add_child.html")
+
+@bp.route("/children/<int:id>/delete", methods=["POST"])
+@login_required
+def children_delete(id):
+    parent_id = session.get("user_id")
+
+    db = get_db()
+    db.execute(
+        "DELETE FROM children WHERE id = ? AND parent_id = ?", (id, parent_id,)
+    )
+    db.commit()
+    return redirect(url_for("auth.children"))

@@ -8,6 +8,11 @@
   <h2>{{ child['name'] }}</h2>
   <p>{{ child['birth_year'] }}</p>
   <p>{{ child['utr'] }}</p>
+
+  <form method="POST" action="{{ url_for('auth.children_delete', id=child['id']) }}">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <button type="submit">Delete</button>
+  </form>
 </article>
 {% endfor %}
 {% endblock %}

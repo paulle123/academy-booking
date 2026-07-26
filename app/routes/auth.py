@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, session, redirect, url_for
+from flask import Blueprint, render_template, request, session, redirect, url_for, abort
 from werkzeug.security import generate_password_hash, check_password_hash
 from app.db import get_db
 from functools import wraps
@@ -138,3 +138,49 @@ def children_delete(id):
     )
     db.commit()
     return redirect(url_for("auth.children"))
+
+@bp.route("/children/<int:id>/edit", methods=["POST","GET"])
+@login_required
+def edit_children(id):
+    parent_id = session.get("user_id")
+
+    if request.method == "GET":
+        db = get_db()
+        child = db.execute(
+            "SELECT name, birth_year, utr FROM children WHERE id = ? AND parent_id = ?", (id, parent_id,)
+        ).fetchone()
+
+        if child is None:
+            abort(404)
+        return render_template("edit_child.html", child=child)
+
+    if request.method == "POST":
+        name = request.form["name"]
+        birth_year = request.form["birth_year"]
+        utr_raw = request.form.get("utr", "").strip()
+        utr = None
+
+        if not name:
+            return "Invalid name."
+        try:
+            birth_year = int(request.form["birth_year"])
+        except ValueError:
+            return "Birth year must be a number."
+        if birth_year < 2007 or birth_year > 2023:
+            return "Invalid birth year."
+        if utr_raw:
+            try:
+                utr = float(utr_raw)
+            except ValueError:
+                return "UTR must be a number."
+
+        db = get_db()
+        db.execute(
+            "UPDATE children SET name = ?, birth_year = ?, utr = ? WHERE parent_id = ?",
+            (name, birth_year, utr, parent_id,)
+        )
+        db.commit()
+
+        return redirect(url_for("auth.children"))
+
+    

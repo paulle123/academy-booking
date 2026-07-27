@@ -182,5 +182,3 @@ def edit_children(id):
         db.commit()
 
         return redirect(url_for("auth.children"))
-
-    

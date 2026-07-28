@@ -223,3 +223,16 @@ def enroll_child():
 
     return redirect(url_for("auth.children"))
 
+@bp.route("/enrollments", methods=["GET"])
+@login_required
+def enrollments():
+    parent_id = session.get("user_id")
+
+    db = get_db()
+
+    enrolled = db.execute(
+        "SELECT e.id, e.status, e.amount_cents, c.name AS child_name, p.name AS program_name, po.label AS option_label FROM enrollments e JOIN children c ON e.child_id = c.id JOIN program_options po ON e.option_id = po.id JOIN programs p ON po.program_id = p.id WHERE c.parent_id = ?", (parent_id,)
+    ).fetchall()
+
+    return render_template("enrollments.html", enrolled=enrolled)
+

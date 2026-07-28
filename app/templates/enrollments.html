@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block title %}Enrollments — {{ site.get('academy_name', '') }}{% endblock %}
+{% block content %}
+<h1>Enrollments</h1>
+
+{% for e in enrolled %}
+<article class="card">
+  <h2>{{ e['child_name'] }}</h2>
+  <p>{{ e['program_name'] }} - {{ e['option_label'] }}</p>
+  <p>Status: {{ e['status'] }}</p>
+  <p>{{ e['amount_cents'] | usd }}</p>
+</article>
+{% endfor %}
+{% endblock %}

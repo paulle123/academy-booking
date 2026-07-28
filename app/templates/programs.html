@@ -24,7 +24,22 @@
           <td>{{ opt['label'] }}{% if opt['billing_period'] == 'week' %} <span class="badge">weekly</span>{% endif %}</td>
           <td>{{ opt['price_member_cents'] | usd }}</td>
           <td>{{ opt['price_nonmember_cents'] | usd }}</td>
-          <td>{# Phase 3: Enroll button #}<span class="muted">Enroll — coming soon</span></td>
+          <td>
+            {% if children %}
+              <form method="POST" action="{{ url_for('auth.enroll_child') }}">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <input type="hidden" name="option_id" value="{{ opt['id'] }}">
+                <select name="child_id">
+                  {% for child in children %}
+                    <option value="{{child['id'] }}">{{ child['name']}}</option>
+                  {% endfor%}
+                </select>
+                <button type="submit">Enroll</button>
+              </form>
+              {% else %}
+                <a href="{{ url_for('auth.login')}}">Log in to enroll</a>
+              {% endif %}
+        </td>
         </tr>
         {% endfor %}
       </tbody>

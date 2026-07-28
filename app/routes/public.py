@@ -1,5 +1,5 @@
 """Public routes — no login required. Phase 1 scope."""
-from flask import Blueprint, render_template
+from flask import Blueprint, render_template, session
 
 from ..db import get_db
 
@@ -27,6 +27,12 @@ def programs():
     options_by_program = {}
     for o in options:
         options_by_program.setdefault(o["program_id"], []).append(o)
+
+    children = None
+    if session.get("user_id"):
+        children = db.execute(
+            "SELECT id, name FROM children WHERE parent_id = ?", (session["user_id"],)
+        ).fetchall()
     return render_template(
-        "programs.html", programs=programs, options=options_by_program
+        "programs.html", programs=programs, options=options_by_program, children=children
     )

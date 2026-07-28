@@ -182,3 +182,44 @@ def edit_children(id):
         db.commit()
 
         return redirect(url_for("auth.children"))
+
+@bp.route("/enroll", methods=["POST"])
+@login_required
+def enroll_child():
+    parent_id = session.get("user_id")
+
+    child_id = request.form["child_id"]
+    option_id = request.form["option_id"]
+
+    db = get_db()
+    child = db.execute(
+        "SELECT id FROM children WHERE id = ? AND parent_id = ?", (child_id, parent_id,)
+    ).fetchone()
+
+    if child is None:
+        abort(404)
+
+    option = db.execute(
+        "SELECT id, price_nonmember_cents FROM program_options WHERE id = ? AND active = 1",
+        (option_id,)
+    ).fetchone()
+
+    if option is None:
+        abort(404)
+
+    amount_cents = option['price_nonmember_cents']
+
+    existing = db.execute(
+        "SELECT id FROM enrollments WHERE child_id = ? AND option_id = ?", (child_id, option_id,)
+    ).fetchone()
+    if existing:
+        return "Child is already enrolled."
+
+    db.execute(
+        "INSERT INTO enrollments (child_id, option_id, status, amount_cents) VALUES (?, ?, ?, ?)",
+        (child_id, option_id, 'pending', amount_cents,)
+    )
+    db.commit()
+
+    return redirect(url_for("auth.children"))
+

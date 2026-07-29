@@ -1,4 +1,9 @@
-# ROADMAP.md — Phases 2–7 (specs, not code)
+# ROADMAP.md — full project plan (Phases 2–7)
+
+This is the intended design for the complete product. Current status:
+Phases 2 and 3 are implemented as a working MVP (registration, login,
+children management, enrollment). Email verification, password reset,
+rate limiting, capacity checks, member/non-member pricing, enrollment cancellation, payments (Phase 5), and the admin panel (Phase 4) are planned but not yet built.
 
 Each phase = goal → what it adds → key concepts learned → security notes → definition of done (DoD).
 
@@ -124,7 +129,7 @@ backup/restore rehearsed once; privacy/terms linked in footer.
 
 ## Phase 7 — Launch
 
-**Goal:** public HTTPS URL a recruiter can open.
+**Goal:** public HTTPS URL.
 
 **Adds:** deploy to Fly.io (free volume mounted at /data → DATABASE_PATH) or
 Render + Turso (swap sqlite3 connection for libsql client in db.py ONLY);

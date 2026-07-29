@@ -1,14 +1,22 @@
 # Academy Booking
 
 White-label booking & enrollment system for a tennis academy. Parents register,
-add their children, enroll them into programs and pay online (Stripe test mode);
-the academy owner manages everything from an admin panel.
+add their children, enroll them into programs. Payments and admin panel are planned (see status below).
 
 **Stack:** Flask · raw SQLite (parameterized SQL) · Jinja2 · Docker · Stripe hosted Checkout
 
 > **Live:** https://academy-booking.fly.dev — deployed on Fly.io.
-> Status: Phases 1–3 (skeleton, accounts, enrollment) are the current MVP.
+>
+> Status: Working MVP — parents can register, log in, log out, manage their children and enroll them into programs.
+>
 > Payments (Stripe) and full admin are in progress — see `ROADMAP.md`.
+
+## What works
+
+- Parent registration and login (hashed passwords, session auth)
+- Add / edit / delete children (with ownership checks)
+- Browse programs, enroll a child, view enrollments
+- Deployed on Fly.io with a persistent SQLite volume
 
 ## Run locally
 
@@ -47,7 +55,7 @@ the next request.
 | Parent | parent@demo.test  | Demo1234!  |
 | Admin  | admin@demo.test   | Admin1234! |
 
-Stripe test card (once Phase 5 lands): `4242 4242 4242 4242`, any future expiry, any CVC/ZIP.
+Stripe test card (when payments are added): `4242 4242 4242 4242`, any future expiry, any CVC/ZIP.
 
 ## Documentation
 

@@ -42,7 +42,7 @@ def register():
                (email, pw_hash, 'parent', 0, 0)
         )
         db.commit()
-        return 'Registered!'
+        return redirect(url_for('auth.login'))
     return render_template("register.html")
 
 @bp.route("/login", methods=["GET", "POST"])
@@ -69,7 +69,7 @@ def login():
             return "Invalid email or password."
         
         session["user_id"] = user["id"]
-        return "Logged in!"
+        return redirect(url_for('public.programs'))
         
     return render_template("login.html")
 

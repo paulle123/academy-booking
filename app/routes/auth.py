@@ -176,8 +176,8 @@ def edit_children(id):
 
         db = get_db()
         db.execute(
-            "UPDATE children SET name = ?, birth_year = ?, utr = ? WHERE parent_id = ?",
-            (name, birth_year, utr, parent_id,)
+            "UPDATE children SET name = ?, birth_year = ?, utr = ? WHERE parent_id = ? AND id = ?",
+            (name, birth_year, utr, parent_id, id)
         )
         db.commit()
 

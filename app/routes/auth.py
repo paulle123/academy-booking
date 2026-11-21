@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, session, redirect, url_for, abort
+from flask import Blueprint, render_template, request, session, redirect, url_for, abort, flash
 from werkzeug.security import generate_password_hash, check_password_hash
 from app.db import get_db
 from functools import wraps
@@ -12,6 +12,23 @@ def login_required(view):
             return redirect(url_for("auth.login"))
         return view(*args, **kwargs)
     return wrapped
+
+def child_validate(name, birth_year, utr_raw):
+    utr = None
+    if not name:
+        return "Invalid name.", None
+    try:
+        birth_year = int(birth_year)
+    except ValueError:
+        return "Birth year must be a number.", None
+    if birth_year < 2007 or birth_year > 2023:
+        return "Invalid birth year.", None
+    if utr_raw:
+        try:
+            utr = float(utr_raw)
+        except ValueError:
+            return "UTR must be a number.", None
+    return None, (name, birth_year, utr)
 
 @bp.route("/register", methods=['GET', 'POST'])
 def register():
@@ -102,21 +119,12 @@ def children_add():
         name = request.form['name']
         birth_year = request.form['birth_year']
         utr_raw = request.form.get("utr", "").strip()
-        utr = None
 
-        if not name:
-            return "Invalid name."
-        try:
-            birth_year = int(request.form["birth_year"])
-        except ValueError:
-            return "Birth year must be a number."
-        if birth_year < 2007 or birth_year > 2023:
-            return "Invalid birth year."
-        if utr_raw:
-            try:
-                utr = float(utr_raw)
-            except ValueError:
-                return "UTR must be a number."
+        error, data = child_validate(name, birth_year, utr_raw)
+        if error:
+            flash(error)
+            return redirect(url_for("auth.children"))
+        name, birth_year, utr = data
 
         db = get_db()
         db.execute(
@@ -155,24 +163,15 @@ def edit_children(id):
         return render_template("edit_child.html", child=child)
 
     if request.method == "POST":
-        name = request.form["name"]
-        birth_year = request.form["birth_year"]
+        name = request.form['name']
+        birth_year = request.form['birth_year']
         utr_raw = request.form.get("utr", "").strip()
-        utr = None
-
-        if not name:
-            return "Invalid name."
-        try:
-            birth_year = int(request.form["birth_year"])
-        except ValueError:
-            return "Birth year must be a number."
-        if birth_year < 2007 or birth_year > 2023:
-            return "Invalid birth year."
-        if utr_raw:
-            try:
-                utr = float(utr_raw)
-            except ValueError:
-                return "UTR must be a number."
+        
+        error, data = child_validate(name, birth_year, utr_raw)
+        if error:
+            flash(error)
+            return redirect(url_for("auth.children"))
+        name, birth_year, utr = data
 
         db = get_db()
         db.execute(

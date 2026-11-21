@@ -6,7 +6,7 @@
 
     <input type="text" name="name" value="{{child['name']}}">
     <input type="number" name="birth_year" value="{{child['birth_year']}}">
-    <input type="number" name="utr" value="{{child['utr']}}">
+    <input type="number" name="utr" step="0.01" value="{{child['utr'] if child['utr'] is not none else ''}}">
 
     <button type="submit">Submit</button>
 </form>

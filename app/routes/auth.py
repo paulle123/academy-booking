@@ -30,16 +30,24 @@ def child_validate(name, birth_year, utr_raw):
             return "UTR must be a number.", None
     return None, (name, birth_year, utr)
 
+def validate_credentials(email, password):
+    if not email or "@" not in email:
+        return "Please enter a valid email.", None
+    if len(password) < 8:
+        return "Password must be at least 8 characters.", None
+    return None, (email, password)
+
 @bp.route("/register", methods=['GET', 'POST'])
 def register():
     if request.method == 'POST':
         email = request.form['email']
         password = request.form['password']
 
-        if not email or "@" not in email:
-            return "Please enter a valid email."
-        if len(password) < 8:
-            return "Password must be at least 8 characters."
+        error, data = validate_credentials(email, password)
+        if error:
+            flash(error)
+            return redirect(url_for("auth.register"))
+        email, password = data
 
         db = get_db()
 
@@ -68,10 +76,11 @@ def login():
         email = request.form['email']
         password = request.form['password']
 
-        if not email or "@" not in email:
-            return "Please enter a valid email."
-        if len(password) < 8:
-            return "Password must be at least 8 characters."
+        error, data = validate_credentials(email, password)
+        if error:
+            flash(error)
+            return redirect(url_for("auth.login"))
+        email, password = data
 
         db = get_db()
 
